@@ -1,12 +1,18 @@
 package org.rb.plugins
 
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.rb.dao.dao
 
 fun Application.configureRouting() {
+    install(ContentNegotiation) {
+        json()
+    }
+
     routing {
         get("create") {
             val url = call.request.queryParameters["url"]
@@ -21,7 +27,7 @@ fun Application.configureRouting() {
                 return@get
             }
 
-            call.respondText("Link created! http://localhost:8080/${link.code}")
+            call.respond(mapOf("url" to "http://localhost:8080/${link.code}"))
         }
 
         get("{code}") {
